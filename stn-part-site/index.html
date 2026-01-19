@@ -5,161 +5,121 @@
     <title>СНТ "Партизанская-1" - Инвентарь и Закупки</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <!-- Библиотеки для PDF и JPG (html2canvas и jsPDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
 		body {
 			font-family: 'Georgia', 'Times New Roman', serif;
-			/* Прямая ссылка на фон с оригинального сайта */
 			background: url('https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBWkk9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--ae16ca42139ec909bd533788320622fbab842ab3/back.jpg') no-repeat center center fixed;
-			
-			/* Растягиваем на весь экран */
 			-webkit-background-size: cover;
 			-moz-background-size: cover;
-			-o-background-size: cover;
 			background-size: cover;
-			
-			margin: 0;
-			padding: 0;
+			margin: 0; padding: 0;
 		}
         
-        /* === Базовые стили === */
         .header-img { width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 20px 0px rgba(0,0,0,0.14); }
         .menu-color { background-color: #8080ff; }
         .container { max-width: 1140px; margin: 0 auto; padding: 0 15px; }
         .row { display: flex; flex-wrap: wrap; margin: 0 -15px; }
-        .col-md-3 { flex: 0 0 25%; max-width: 25%; padding: 0 15px; box-sizing: border-box;}
-        .col-md-9 { flex: 0 0 75%; max-width: 75%; padding: 0 15px; box-sizing: border-box;}
+        .col-md-3 { flex: 0 0 25%; max-width: 25%; padding: 0 0 15px 0; box-sizing: border-box;}
+        .col-md-9 { flex: 0 0 75%; max-width: 75%; padding: 0 0 0 15px; box-sizing: border-box;}
         
         @media (max-width: 768px) {
-            .col-md-3, .col-md-9 { flex: 0 0 100%; max-width: 100%; }
+            .col-md-3, .col-md-9 { flex: 0 0 100%; max-width: 100%; padding: 5px;}
             #menu { display: none; } 
+
         }
 
-        /* Меню */
         #menu { padding: 10px; border-radius: 6px; margin-top: 20px; }
         #menu ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; }
         #menu li { margin-right: 15px; }
         #menu a { color: white; text-decoration: none; font-size: 14px; text-transform: uppercase; padding: 10px; display: block; transition: 0.3s; }
         #menu a:hover { background-color: rgba(255,255,255,0.2); border-radius: 4px; }
 
-        /* Сайдбар */
-			#sidebar-menu {
-            background-color: white; /* Белый фон */
-            border-radius: 6px;      /* Скругленные углы */
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14); /* Тень */
-            overflow: hidden;        /* Чтобы углы не обрезались контентом */
-            margin-bottom: 20px;
-            margin-top: 20px;
+		#sidebar-menu {
+            background-color: white; border-radius: 6px; box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14); overflow: hidden; margin-bottom: 20px; margin-top: 20px;
         }
-
         .right-dropdown-menu { list-style: none; padding: 0; margin: 0; }
         .right-dropdown-menu li { border-bottom: 1px solid #ddd; }
-        /* Убираем границу у последнего элемента для красоты */
         .right-dropdown-menu li:last-child { border-bottom: none; }
-        
-        .right-dropdown-menu a {
-            display: block;
-            padding: 12px 15px; /* Чуть больше отступа для удобства */
-            color: #8080ff;
-            text-decoration: none;
-        }
+        .right-dropdown-menu a { display: block; padding: 12px 15px; color: #8080ff; text-decoration: none; cursor: pointer;}
         .right-dropdown-menu a:hover { background-color: #f0f0ff; }
         .right-dropdown-menu a.active { background-color: #8080ff; color: white; }
         
         .news-link { display: block; color: #8080ff; text-decoration: none; padding: 5px 0; font-size: 13px; }
 
-        /* === ИНВЕНТАРЬ И ЗАКУПКИ === */
-        .inventory-card {
-            background: white;
-            border-radius: 6px;
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
-            padding: 20px;
-            margin-top: 20px;
-            min-height: 400px;
-        }
-
-        /* Список предметов */
+        .inventory-card { background: white; border-radius: 6px; box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14); padding: 20px; margin-top: 20px; min-height: 400px; }
         .inventory-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .item-name { font-size: 18px; flex-grow: 1; display: flex; align-items: center; }
         .item-controls { display: flex; align-items: center; }
         .item-input { width: 60px; text-align: center; font-size: 18px; border: 1px solid #ddd; border-radius: 4px; margin: 0 5px; padding: 5px; }
-        .item-input:disabled { background-color: #f9f9f9; color: #333; border: none; font-weight: bold; }
         
-        /* Кнопки +/- */
         .btn-qty { background-color: #8080ff; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; display: none; }
         .editing-mode .btn-qty { display: inline-block; }
-        .editing-mode .item-input { border: 1px solid #8080ff; background-color: #fff; }
+        .btn-delete { background-color: #f44336; color: white; border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 15px; display: none; }
+        .editing-mode .btn-delete { display: inline-block; }
 
-        /* Чекбоксы закупки */
-        .purchase-check {
-            margin-right: 15px;
-            transform: scale(1.5);
-            display: none; /* Скрыты по умолчанию */
-        }
+        .purchase-check { margin-right: 15px; transform: scale(1.5); display: none; }
         .selection-mode .purchase-check { display: inline-block; }
-        .selection-mode .item-controls { display: none; } /* Скрываем управление кол-вом при выборе */
+        .selection-mode .item-controls { display: none; } 
 
-        /* Кнопки управления */
         .main-controls { margin-top: 30px; padding-top: 20px; border-top: 2px solid #8080ff; }
         .btn-action { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 10px; margin-bottom: 10px; transition: 0.3s; text-transform: uppercase; color: white; }
+        
         .btn-primary { background-color: #8080ff; }
         .btn-success { background-color: #4caf50; }
         .btn-danger { background-color: #f44336; }
         .btn-warning { background-color: #ff9800; }
         .btn-secondary { background-color: #999; }
+        .btn-info { background-color: #17a2b8; } 
+
         .btn-action:hover { opacity: 0.8; }
         
         .add-form { margin-top: 15px; padding: 15px; background: #f0f0ff; border-radius: 5px; display: none; }
         .add-input { padding: 8px; width: 60%; border: 1px solid #ccc; border-radius: 4px; }
 
-        /* === ЭКРАН СОСТАВЛЕНИЯ ЗАПРОСА === */
-        #purchase-editor-screen { display: none; }
+        #purchase-editor-screen, #document-preview-screen, #history-screen { display: none; }
         .purchase-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         .purchase-table th, .purchase-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         .purchase-table th { background-color: #f0f0ff; }
 
-        /* === ОФИЦИАЛЬНЫЙ БЛАНК (PREVIEW) === */
-        #document-preview-screen { display: none; text-align: center; }
-        
-        #formal-request-document {
-            background: white;
-            width: 210mm; /* A4 width */
-            min-height: 297mm;
-            padding: 20mm;
-            margin: 0 auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            text-align: left;
-            font-family: 'Times New Roman', Times, serif;
-            color: black;
-            box-sizing: border-box;
-            position: relative;
-        }
+        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table th, .history-table td { border-bottom: 1px solid #eee; padding: 15px; text-align: left; }
+        .history-table th { color: #8080ff; border-bottom: 2px solid #8080ff; }
+        .history-row:hover { background-color: #f9f9f9; cursor: pointer; }
 
+        #formal-request-document {
+            background: white; width: 210mm; min-height: 297mm; padding: 20mm; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.3); text-align: left; font-family: 'Times New Roman', Times, serif; color: black; box-sizing: border-box; position: relative;
+        }
         .doc-header { text-align: right; margin-bottom: 40px; font-size: 14pt; }
         .doc-title { text-align: center; font-weight: bold; font-size: 16pt; margin-bottom: 20px; text-transform: uppercase; }
         .doc-intro { font-size: 14pt; margin-bottom: 20px; line-height: 1.5; }
-        
         .doc-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14pt; }
         .doc-table th, .doc-table td { border: 1px solid black; padding: 8px; }
         .doc-table th { text-align: center; font-weight: bold; }
         .doc-table td.qty-cell { text-align: center; }
-
         .doc-footer { margin-top: 50px; display: flex; justify-content: space-between; font-size: 14pt; }
 
-        /* Footer сайта */
         #footer { margin-top: 30px; padding: 20px; text-align: center; font-size: 14px; }
+        #loading-message { text-align: center; color: #8080ff; font-weight: bold; display: none; margin-bottom: 10px;}
+
+        /* Стиль для кнопки обновления */
+        .refresh-btn { 
+            cursor: pointer; 
+            color: #8080ff; 
+            margin-left: 10px; 
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+        .refresh-btn:hover { transform: rotate(180deg); }
     </style>
 </head>
 <body>
 
 <div class="container mb-10">
-    <!-- HEADER -->
     <div id="header" class="row mt-10">
         <img class="img-fluid rounded header-img" src="./СНТ _Партизанская-1__files/header_partizanskaya.jpg" alt="СНТ Партизанская-1">
     </div>
@@ -168,52 +128,51 @@
     <div class="row rounded mt-10 menu-color" id="menu">
         <ul class="nav av-pills">
             <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/"><i class="fas fa-home"></i> Главная</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/profile"><i class="fas fa-address-card"></i> Личный кабинет</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/blog"><i class="fas fa-edit"></i> Новости</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/forum/forum_posts"><i class="fas fa-comments"></i> Форум</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/feedback"><i class="fas fa-envelope"></i> Написать в правление</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/votes"><i class="fas fa-chart-pie"></i> Голосование</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/ads"><i class="fas fa-shopping-cart"></i> Объявления</a></li>
-            <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/contacts"><i class="fas fa-map-signs"></i> Контакты</a></li>
+            <li><a href="#"><i class="fas fa-address-card"></i> Личный кабинет</a></li>
+            <li><a href="#"><i class="fas fa-edit"></i> Новости</a></li>
+            <li><a href="#"><i class="fas fa-comments"></i> Форум</a></li>
+            <li><a href="#"><i class="fas fa-envelope"></i> Написать в правление</a></li>
+            <li><a href="#"><i class="fas fa-chart-pie"></i> Голосование</a></li>
+            <li><a href="#"><i class="fas fa-shopping-cart"></i> Объявления</a></li>
+            <li><a href="#"><i class="fas fa-map-signs"></i> Контакты</a></li>
         </ul>
     </div>
 
     <div id="wrapper">
         <div id="content" class="row mt-10">
-            
             <!-- SIDEBAR -->
             <div id="sidebar" class="col-md-3">
                 <div id="sidebar-menu">
                     <ul class="right-dropdown-menu">
                         <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/"><i class="fas fa-home"></i> Главная</a></li>
-                        <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/profile"><i class="fas fa-address-card"></i> Личный кабинет</a></li>
-                        <li><a class="active" href="#" onclick="return false;"><i class="fas fa-clipboard-list"></i> <b>Учет инвентаря</b></a></li>
-                        <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/ustav"><i class="fas fa-file-alt"></i> Документы СНТ</a></li>
-                        <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/obschie-sobraniya"><i class="fas fa-users"></i> Общие собрания</a></li>
-                        <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/dolzhniki"><i class="fas fa-exclamation-circle"></i> Должники</a></li>
-                        <li><a href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/galleries"><i class="fas fa-images"></i> Галерея</a></li>
+                        <li><a class="active" href="#" onclick="showScreen('main'); return false;"><i class="fas fa-clipboard-list"></i> <b>Учет инвентаря</b></a></li>
+                        <li><a href="#" onclick="showScreen('history'); return false;"><i class="fas fa-history"></i> <b>История закупок</b></a></li>
+                        <li><a href="#"><i class="fas fa-file-alt"></i> Документы СНТ</a></li>
+                        <li><a href="#"><i class="fas fa-users"></i> Общие собрания</a></li>
+                        <li><a href="#"><i class="fas fa-exclamation-circle"></i> Должники</a></li>
                     </ul>
                 </div>
                 
                 <div class="inventory-card" style="margin-top: 20px; min-height: auto;">
                     <h4 class="text-center" style="color: #8080ff;">Новости</h4>
-                    <a class="news-link" href="https://xn----1-6cdaa1chuyftojjhe5v.xn--p1ai/articles/31">• ОТКЛЮЧЕНИЕ ВОДОПРОВОДА 04.10.2025</a>
+                    <a class="news-link" href="#">• ОТКЛЮЧЕНИЕ ВОДОПРОВОДА 04.10.2025</a>
                 </div>
             </div>
 
             <!-- CONTENT AREA -->
             <div class="content-box col-md-9 pt-10 pb-10">
                 
-                <!-- 1. ЭКРАН ИНВЕНТАРЯ (ГЛАВНЫЙ) -->
+                <!-- 1. ГЛАВНЫЙ ЭКРАН -->
                 <div class="inventory-card" id="main-inventory-screen">
                     <h2 style="color: #8080ff; border-bottom: 2px solid #8080ff; padding-bottom: 10px;">
                         <i class="fas fa-tools"></i> Учет хозяйственного инвентаря
+                        <i class="fas fa-sync-alt refresh-btn" onclick="forceReload()" title="Обновить данные"></i>
                     </h2>
                     
+                    <div id="loading-message">Загрузка данных из облака...</div>
                     <div id="inventory-list-container"></div>
 
                     <div class="main-controls">
-                        <!-- Кнопки по умолчанию -->
                         <div id="default-buttons">
                             <button class="btn-action btn-primary" onclick="enableEditMode()">
                                 <i class="fas fa-pen"></i> Изменить кол-во
@@ -221,19 +180,20 @@
                             <button class="btn-action btn-warning" onclick="togglePurchaseSelection()">
                                 <i class="fas fa-shopping-basket"></i> Создать запрос на закупку
                             </button>
+                            <button class="btn-action btn-info" onclick="showScreen('history')">
+                                <i class="fas fa-history"></i> История закупок
+                            </button>
                         </div>
 
-                        <!-- Кнопки режима правки кол-ва -->
                         <div id="edit-buttons" style="display: none;">
                             <button class="btn-action btn-success" onclick="saveChanges()">
-                                <i class="fas fa-save"></i> Сохранить
+                                <i class="fas fa-save"></i> Сохранить в облако
                             </button>
                             <button class="btn-action btn-danger" onclick="cancelChanges()">
                                 <i class="fas fa-times"></i> Отменить
                             </button>
                         </div>
 
-                        <!-- Кнопки режима выбора закупки -->
                         <div id="purchase-select-buttons" style="display: none;">
                             <button class="btn-action btn-success" onclick="goToPurchaseEditor()">
                                 <i class="fas fa-arrow-right"></i> Начать составление запроса
@@ -245,12 +205,10 @@
 
                         <br>
                         
-                        <!-- Блок добавления предмета в базу -->
                         <div id="add-to-base-container">
                             <button class="btn-action btn-secondary" id="btn-show-add" onclick="toggleAddForm()">
                                 <i class="fas fa-plus"></i> Добавить новый предмет в базу
                             </button>
-                            
                             <div id="add-item-block" class="add-form">
                                 <h4>Новый предмет на склад</h4>
                                 <input type="text" id="new-item-name" class="add-input" placeholder="Название предмета">
@@ -260,33 +218,22 @@
                     </div>
                 </div>
 
-                <!-- 2. ЭКРАН РЕДАКТОРА ЗАКУПКИ -->
+                <!-- 2. РЕДАКТОР ЗАКУПКИ -->
                 <div class="inventory-card" id="purchase-editor-screen">
                     <h2 style="color: #8080ff;">Формирование закупки</h2>
                     <p>Укажите необходимое количество для каждого предмета.</p>
-                    
                     <table class="purchase-table" id="purchase-items-table">
-                        <thead>
-                            <tr>
-                                <th>Наименование</th>
-                                <th style="width: 100px;">Кол-во (закупить)</th>
-                                <th style="width: 50px;">Удалить</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Сюда попадут выбранные товары -->
-                        </tbody>
+                        <thead><tr><th>Наименование</th><th style="width: 100px;">Кол-во</th><th style="width: 50px;">Удалить</th></tr></thead>
+                        <tbody></tbody>
                     </table>
-
                     <div class="add-form" style="display: block; margin-bottom: 20px;">
-                        <h4>Добавить позицию в этот запрос</h4>
-                        <input type="text" id="purchase-extra-name" class="add-input" placeholder="Название (чего нет в базе)">
+                        <h4>Добавить позицию</h4>
+                        <input type="text" id="purchase-extra-name" class="add-input" placeholder="Название">
                         <input type="number" id="purchase-extra-qty" class="item-input" value="1" min="1" style="width: 60px;">
                         <button class="btn-action btn-secondary" onclick="addExtraPurchaseItem()" style="padding: 8px 15px;">Добавить</button>
                     </div>
-
                     <div class="main-controls">
-                        <button class="btn-action btn-success" onclick="showFinalDocument()">
+                        <button class="btn-action btn-success" onclick="saveAndPreviewRequest()">
                             <i class="fas fa-file-contract"></i> Сохранить запрос и просмотреть
                         </button>
                         <button class="btn-action btn-secondary" onclick="backToMain()">
@@ -295,11 +242,32 @@
                     </div>
                 </div>
 
-                <!-- 3. ЭКРАН ПРЕДПРОСМОТРА ДОКУМЕНТА -->
+                <!-- 3. ИСТОРИЯ ЗАПРОСОВ -->
+                <div class="inventory-card" id="history-screen">
+                    <h2 style="color: #8080ff; border-bottom: 2px solid #8080ff; padding-bottom: 10px;">
+                        <i class="fas fa-history"></i> История запросов
+                    </h2>
+                    <button class="btn-action btn-secondary" onclick="showScreen('main')" style="margin-bottom: 15px;">
+                        <i class="fas fa-arrow-left"></i> Вернуться к инвентарю
+                    </button>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>№ Заказа</th>
+                                <th>Дата и Время</th>
+                                <th>Кол-во позиций</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-list-body"></tbody>
+                    </table>
+                </div>
+
+                <!-- 4. ПРЕДПРОСМОТР ДОКУМЕНТА (БЛАНК) -->
                 <div id="document-preview-screen">
                     <div style="margin-bottom: 20px;">
-                        <button class="btn-action btn-secondary" onclick="backToEditor()">
-                            <i class="fas fa-arrow-left"></i> Редактировать
+                        <button class="btn-action btn-secondary" id="btn-preview-back" onclick="returnToMainScreen()">
+                            <i class="fas fa-home"></i> На главную
                         </button>
                         <button class="btn-action btn-primary" onclick="saveAsJPG()">
                             <i class="fas fa-image"></i> Сохранить в JPG
@@ -307,120 +275,163 @@
                         <button class="btn-action btn-danger" onclick="saveAsPDF()">
                             <i class="fas fa-file-pdf"></i> Сохранить в PDF
                         </button>
-						<button class="btn-action btn-secondary" onclick="returnToMainScreen()">
-							<i class="fas fa-home"></i> На главную
-						</button>
-
                     </div>
 
-                    <!-- САМ ДОКУМЕНТ -->
                     <div id="formal-request-document">
-                        <div class="doc-header">
-                            В Правление<br>
-                            СНТ "Партизанская-1"<br>
-                            от Ответственного за хоз. часть
-                        </div>
-                        
-                        <div class="doc-title">
-                            ЗАПРОС<br>на закупку хозяйственного инвентаря
-                        </div>
-
-                        <div class="doc-intro">
-                            Прошу рассмотреть возможность приобретения и выделения средств на закупку хозяйственного инвентаря в следующем составе и количестве:
-                        </div>
-
+                        <div class="doc-header">В Правление<br>СНТ "Партизанская-1"<br>от Ответственного за хоз. часть</div>
+                        <div class="doc-title">ЗАПРОС<br>на закупку хозяйственного инвентаря</div>
+                        <div class="doc-intro">Прошу рассмотреть возможность приобретения и выделения средств на закупку хозяйственного инвентаря в следующем составе и количестве:</div>
                         <table class="doc-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 10%;">№</th>
-                                    <th>Наименование инвентаря</th>
-                                    <th style="width: 20%;">Количество (шт.)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="doc-table-body">
-                                <!-- JS заполнит это -->
-                            </tbody>
+                            <thead><tr><th style="width: 10%;">№</th><th>Наименование инвентаря</th><th style="width: 20%;">Количество (шт.)</th></tr></thead>
+                            <tbody id="doc-table-body"></tbody>
                         </table>
-
-                        <div class="doc-footer">
-                            <div>Дата: <span id="doc-date"></span></div>
-                            <div>Подпись: _________________</div>
-                        </div>
+                        <div class="doc-footer"><div>Дата: <span id="doc-date"></span></div><div>Подпись: _________________</div></div>
                     </div>
                 </div>
 
             </div>
         </div>
     </div>
-
-    <!-- FOOTER -->
-   <!-- <div id="footer"> 
-        <div class="col-md-12 text-center">
-            <a class="copyright" href="https://snt-it.ru/" target="_blank" style="color: #8080ff;">СНТ "Партизанская-1" - сайт работает на платформе «СНТ-ИТ»</a>
-        </div>
-    </div> -->
 </div>
 
-<!-- JAVASCRIPT -->
 <script>
-    // --- ДАННЫЕ И СОСТОЯНИЕ ---
-    const defaultInventory = [
-        { id: 1, name: "Культиваторы", count: 0 },
-        { id: 2, name: "Газонокосилки", count: 0 },
-        { id: 3, name: "Электро пилы", count: 0 },
-        { id: 4, name: "Перфораторы", count: 0 },
-        { id: 5, name: "Сварочные аппараты", count: 0 },
-        { id: 6, name: "Лопаты", count: 0 },
-        { id: 7, name: "Вёдра", count: 0 },
-        { id: 8, name: "Грабли", count: 0 }
-    ];
+    // ==========================================
+    // Вставьте сюда ваши ключи Supabase
+    const supabaseUrl = 'https://liifxpryhjhvigmnxoiz.supabase.co';
+    const supabaseKey = 'sb_publishable_0Uw1Q04gEB2BNX3RxISw2g_WtEkU49c';
+    // ==========================================
+
+    const client = supabase.createClient(supabaseUrl, supabaseKey);
 
     let inventoryState = [];
     let isEditing = false;
     let isSelectionMode = false;
-    let purchaseList = []; // Массив для закупки: { name: string, qty: number }
+    let purchaseList = []; 
+    let currentViewSource = 'editor';
 
-    // --- БАЗОВЫЕ ФУНКЦИИ ИНВЕНТАРЯ ---
+    // --- НАВИГАЦИЯ ---
+    function showScreen(screenName) {
+        document.getElementById('main-inventory-screen').style.display = 'none';
+        document.getElementById('purchase-editor-screen').style.display = 'none';
+        document.getElementById('history-screen').style.display = 'none';
+        document.getElementById('document-preview-screen').style.display = 'none';
+        
+        cancelPurchaseMode();
+        isEditing = false;
 
-    function loadData() {
-        const storedData = localStorage.getItem('snt_inventory_data');
-        if (storedData) {
-            inventoryState = JSON.parse(storedData);
-        } else {
-            inventoryState = JSON.parse(JSON.stringify(defaultInventory));
+        if (screenName === 'main') {
+            document.getElementById('main-inventory-screen').style.display = 'block';
+            // ВАЖНОЕ ИСПРАВЛЕНИЕ:
+            // Если данные уже есть, не загружаем их заново, чтобы не зависало.
+            if (inventoryState.length === 0) {
+                loadData();
+            } else {
+                renderInventory();
+                updateUIState();
+            }
+        } else if (screenName === 'history') {
+            document.getElementById('history-screen').style.display = 'block';
+            loadHistory();
         }
-        renderInventory();
+    }
+
+    // Принудительное обновление по кнопке
+    function forceReload() {
+        loadData();
+    }
+
+    // --- ЗАГРУЗКА ИНВЕНТАРЯ ---
+    async function loadData() {
+        const loader = document.getElementById('loading-message');
+        
+        try {
+            loader.style.display = 'block';
+            document.getElementById('inventory-list-container').innerHTML = '';
+
+            const { data, error } = await client.from('inventory').select('*').order('id', { ascending: true });
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                inventoryState = data;
+            } else {
+                const defaultInventory = [
+                    { name: "Культиваторы", count: 0 }, { name: "Газонокосилки", count: 0 },
+                    { name: "Электро пилы", count: 0 }, { name: "Перфораторы", count: 0 },
+                    { name: "Сварочные аппараты", count: 0 }, { name: "Лопаты", count: 0 },
+                    { name: "Вёдра", count: 0 }, { name: "Грабли", count: 0 }
+                ];
+                const { data: newData } = await client.from('inventory').insert(defaultInventory).select();
+                if(newData) inventoryState = newData;
+            }
+            renderInventory();
+            
+        } catch (err) {
+            console.error('Ошибка загрузки:', err);
+            // Если ошибка, можно показать список пустым или алерт, но лоадер скроется в finally
+            document.getElementById('inventory-list-container').innerHTML = '<p style="text-align:center; color:red;">Ошибка связи с базой данных</p>';
+        } finally {
+            // ВАЖНО: Скрываем лоадер всегда, даже при ошибке
+            loader.style.display = 'none';
+        }
+    }
+
+    async function saveChanges() {
+        const loader = document.getElementById('loading-message');
+        loader.innerText = 'Сохранение...';
+        loader.style.display = 'block';
+        
+        const { error } = await client.from('inventory').upsert(inventoryState);
+        
+        loader.style.display = 'none';
+        loader.innerText = 'Загрузка данных из облака...';
+
+        if (error) { alert('Ошибка сохранения!'); console.error(error); } 
+        else { alert('Сохранено!'); isEditing = false; updateUIState(); renderInventory(); }
+    }
+
+    async function addNewItem() {
+        const name = document.getElementById('new-item-name').value.trim();
+        if (name) {
+            const { data, error } = await client.from('inventory').insert([{ name: name, count: 0 }]).select();
+            if (!error) {
+                inventoryState.push(data[0]);
+                document.getElementById('new-item-name').value = '';
+                toggleAddForm();
+                renderInventory();
+            }
+        }
+    }
+
+    async function deleteItem(index) {
+        if (!isEditing) return;
+        const item = inventoryState[index];
+        if (confirm(`Удалить "${item.name}"?`)) {
+            const { error } = await client.from('inventory').delete().eq('id', item.id);
+            if (!error) { inventoryState.splice(index, 1); renderInventory(); }
+        }
     }
 
     function renderInventory() {
         const container = document.getElementById('inventory-list-container');
         container.innerHTML = ''; 
-        
+        container.className = '';
         if (isEditing) container.classList.add('editing-mode');
-        else container.classList.remove('editing-mode');
-
         if (isSelectionMode) container.classList.add('selection-mode');
-        else container.classList.remove('selection-mode');
 
         inventoryState.forEach((item, index) => {
             const div = document.createElement('div');
             div.className = 'inventory-item';
-            
             div.innerHTML = `
                 <div class="item-name">
                     <input type="checkbox" class="purchase-check" id="check-${index}" value="${index}">
-                    <span><strong>${item.id}.</strong> ${item.name}</span>
+                    <span><strong>${index + 1}.</strong> ${item.name}</span> 
                 </div>
                 <div class="item-controls">
+                    <button class="btn-delete" onclick="deleteItem(${index})"><i class="fas fa-trash"></i></button>
                     <span class="qty-label" style="margin-right: 5px;">кол-во:</span>
                     <button class="btn-qty" onclick="changeCount(${index}, -1)">-</button>
-                    <input type="number" 
-                           id="input-${index}" 
-                           class="item-input" 
-                           value="${item.count}" 
-                           min="0" 
-                           ${isEditing ? '' : 'disabled'} 
-                           onchange="manualInput(${index}, this.value)">
+                    <input type="number" id="input-${index}" class="item-input" value="${item.count}" min="0" ${isEditing ? '' : 'disabled'} onchange="manualInput(${index}, this.value)">
                     <span class="unit-label">шт.</span>
                     <button class="btn-qty" onclick="changeCount(${index}, 1)">+</button>
                 </div>
@@ -429,238 +440,132 @@
         });
     }
 
-    // --- УПРАВЛЕНИЕ РЕЖИМАМИ ГЛАВНОГО ЭКРАНА ---
-
-    function enableEditMode() {
-        isEditing = true;
-        document.getElementById('default-buttons').style.display = 'none';
-        document.getElementById('edit-buttons').style.display = 'block';
-        document.getElementById('btn-show-add').disabled = true; 
-        renderInventory();
-    }
-
-    function saveChanges() {
-        localStorage.setItem('snt_inventory_data', JSON.stringify(inventoryState));
-        isEditing = false;
-        document.getElementById('default-buttons').style.display = 'block';
-        document.getElementById('edit-buttons').style.display = 'none';
-        document.getElementById('btn-show-add').disabled = false;
-        alert('Изменения успешно сохранены!');
-        renderInventory();
-    }
-
-    function cancelChanges() {
-        loadData(); 
-        isEditing = false;
-        document.getElementById('default-buttons').style.display = 'block';
-        document.getElementById('edit-buttons').style.display = 'none';
-        document.getElementById('btn-show-add').disabled = false;
-        renderInventory();
-    }
-
     function changeCount(index, delta) {
         if (!isEditing) return;
-        let newValue = inventoryState[index].count + delta;
-        if (newValue < 0) newValue = 0;
-        inventoryState[index].count = newValue;
-        document.getElementById(`input-${index}`).value = newValue;
+        let v = inventoryState[index].count + delta; if(v<0) v=0;
+        inventoryState[index].count = v; document.getElementById(`input-${index}`).value = v;
     }
-
     function manualInput(index, val) {
-        let parsed = parseInt(val);
-        if (isNaN(parsed) || parsed < 0) parsed = 0;
-        inventoryState[index].count = parsed;
+        let v = parseInt(val); if(isNaN(v)||v<0) v=0; inventoryState[index].count = v;
+    }
+    function toggleAddForm() { const f=document.getElementById('add-item-block'); f.style.display=(f.style.display==='block')?'none':'block'; }
+    function enableEditMode() { isEditing=true; updateUIState(); renderInventory(); }
+    
+    // При отмене перезагружаем данные, чтобы сбросить локальные изменения
+    function cancelChanges() { 
+        loadData(); 
+        isEditing=false; 
+        updateUIState(); 
+    }
+    
+    function updateUIState() {
+        const d=document.getElementById('default-buttons'), e=document.getElementById('edit-buttons'), p=document.getElementById('purchase-select-buttons'), a=document.getElementById('add-to-base-container');
+        if (isSelectionMode) { d.style.display='none'; e.style.display='none'; p.style.display='block'; a.style.display='none'; }
+        else if (isEditing) { d.style.display='none'; e.style.display='block'; p.style.display='none'; a.style.display='none'; }
+        else { d.style.display='block'; e.style.display='none'; p.style.display='none'; a.style.display='block'; }
     }
 
-    function toggleAddForm() {
-        const form = document.getElementById('add-item-block');
-        form.style.display = (form.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function addNewItem() {
-        const input = document.getElementById('new-item-name');
-        const name = input.value.trim();
-        
-        if (name) {
-            const maxId = inventoryState.reduce((max, item) => (item.id > max ? item.id : max), 0);
-            inventoryState.push({ id: maxId + 1, name: name, count: 0 });
-            localStorage.setItem('snt_inventory_data', JSON.stringify(inventoryState));
-            input.value = '';
-            toggleAddForm();
-            renderInventory();
-        } else {
-            alert('Введите название');
-        }
-    }
-
-    // --- ЛОГИКА ЗАКУПОК ---
-
-    function togglePurchaseSelection() {
-        isSelectionMode = true;
-        document.getElementById('default-buttons').style.display = 'none';
-        document.getElementById('purchase-select-buttons').style.display = 'block';
-        document.getElementById('add-to-base-container').style.display = 'none';
-        renderInventory();
-    }
-
-    function cancelPurchaseMode() {
-        isSelectionMode = false;
-        document.getElementById('default-buttons').style.display = 'block';
-        document.getElementById('purchase-select-buttons').style.display = 'none';
-        document.getElementById('add-to-base-container').style.display = 'block';
-        renderInventory();
-    }
-
+    // --- ЗАКУПКИ ---
+    function togglePurchaseSelection() { isSelectionMode=true; updateUIState(); renderInventory(); }
+    function cancelPurchaseMode() { isSelectionMode=false; updateUIState(); renderInventory(); }
+    
     function goToPurchaseEditor() {
-        // Сбор выбранных
         purchaseList = [];
-        const checkboxes = document.querySelectorAll('.purchase-check:checked');
-        
-        checkboxes.forEach(chk => {
-            const index = parseInt(chk.value);
-            purchaseList.push({
-                name: inventoryState[index].name,
-                qty: 1 // По умолчанию покупаем 1 шт
-            });
+        document.querySelectorAll('.purchase-check:checked').forEach(chk => {
+            purchaseList.push({ name: inventoryState[parseInt(chk.value)].name, qty: 1 });
         });
-
-        if (purchaseList.length === 0) {
-            // Если ничего не выбрали, но хотят перейти - просто пустой список, ок
-        }
-
         renderPurchaseEditor();
-        
-        // Переключаем экраны
         document.getElementById('main-inventory-screen').style.display = 'none';
         document.getElementById('purchase-editor-screen').style.display = 'block';
     }
 
     function renderPurchaseEditor() {
-        const tbody = document.querySelector('#purchase-items-table tbody');
-        tbody.innerHTML = '';
+        const tb = document.querySelector('#purchase-items-table tbody'); tb.innerHTML='';
+        purchaseList.forEach((it, i) => {
+            tb.innerHTML += `<tr><td>${it.name}</td><td><input type="number" class="item-input" value="${it.qty}" min="1" onchange="purchaseList[${i}].qty=parseInt(this.value)"> шт.</td><td><button class="btn-qty" style="display:inline-block; background:#f44336;" onclick="removePurchaseItem(${i})">x</button></td></tr>`;
+        });
+    }
+    function removePurchaseItem(i) { purchaseList.splice(i,1); renderPurchaseEditor(); }
+    function addExtraPurchaseItem() {
+        const n=document.getElementById('purchase-extra-name').value.trim();
+        if(n) { purchaseList.push({name:n, qty: parseInt(document.getElementById('purchase-extra-qty').value)||1}); document.getElementById('purchase-extra-name').value=''; renderPurchaseEditor(); }
+    }
+    function backToMain() { document.getElementById('purchase-editor-screen').style.display='none'; showScreen('main'); }
 
-        purchaseList.forEach((item, index) => {
+    // --- СОХРАНЕНИЕ И ИСТОРИЯ ---
+    async function saveAndPreviewRequest() {
+        if (purchaseList.length === 0) { alert('Список пуст!'); return; }
+        const { error } = await client.from('requests').insert([{ items: purchaseList }]);
+        if (error) { console.error(error); alert('Ошибка сохранения истории.'); }
+        currentViewSource = 'editor';
+        renderDocument(purchaseList, new Date());
+    }
+
+    async function loadHistory() {
+        const body = document.getElementById('history-list-body');
+        body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Загрузка...</td></tr>';
+        const { data, error } = await client.from('requests').select('*').order('created_at', { ascending: false });
+        if (error) { body.innerHTML = '<tr><td colspan="4">Ошибка загрузки</td></tr>'; return; }
+        if (!data || data.length === 0) { body.innerHTML = '<tr><td colspan="4">История пуста</td></tr>'; return; }
+        body.innerHTML = '';
+        data.forEach(req => {
+            const dateObj = new Date(req.created_at);
+            const dateStr = dateObj.toLocaleDateString('ru-RU') + ' ' + dateObj.toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit'});
+            const itemCount = req.items ? req.items.length : 0;
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${item.name}</td>
-                <td><input type="number" class="item-input" value="${item.qty}" min="1" onchange="updatePurchaseQty(${index}, this.value)"> шт.</td>
-                <td><button class="btn-qty" style="display:inline-block; background:#f44336;" onclick="removePurchaseItem(${index})">x</button></td>
-            `;
-            tbody.appendChild(tr);
+            tr.className = 'history-row';
+            tr.onclick = () => viewHistoricalRequest(req);
+            tr.innerHTML = `<td>#${req.id}</td><td>${dateStr}</td><td>${itemCount}</td><td><i class="fas fa-eye"></i> Просмотр</td>`;
+            body.appendChild(tr);
         });
     }
 
-    function updatePurchaseQty(index, val) {
-        let v = parseInt(val);
-        if (isNaN(v) || v < 1) v = 1;
-        purchaseList[index].qty = v;
+    function viewHistoricalRequest(req) {
+        currentViewSource = 'history';
+        document.getElementById('history-screen').style.display = 'none';
+        renderDocument(req.items, new Date(req.created_at));
     }
 
-    function removePurchaseItem(index) {
-        purchaseList.splice(index, 1);
-        renderPurchaseEditor();
-    }
-
-    function addExtraPurchaseItem() {
-        const nameInput = document.getElementById('purchase-extra-name');
-        const qtyInput = document.getElementById('purchase-extra-qty');
-        const name = nameInput.value.trim();
-        let qty = parseInt(qtyInput.value);
-        if (qty < 1) qty = 1;
-
-        if (name) {
-            purchaseList.push({ name: name, qty: qty });
-            nameInput.value = '';
-            qtyInput.value = '1';
-            renderPurchaseEditor();
-        } else {
-            alert('Введите название предмета');
-        }
-    }
-
-    function backToMain() {
-        document.getElementById('purchase-editor-screen').style.display = 'none';
-        document.getElementById('main-inventory-screen').style.display = 'block';
-        cancelPurchaseMode(); // Сброс режима выбора
-    }
-
-    // --- ФОРМИРОВАНИЕ ДОКУМЕНТА ---
-
-    function showFinalDocument() {
-        if (purchaseList.length === 0) {
-            alert('Список закупки пуст!');
-            return;
-        }
-
-        // Заполнение данных
+    function renderDocument(items, dateObj) {
         const docBody = document.getElementById('doc-table-body');
         docBody.innerHTML = '';
-        
-        purchaseList.forEach((item, i) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="text-align:center;">${i + 1}</td>
-                <td>${item.name}</td>
-                <td class="qty-cell">${item.qty}</td>
-            `;
-            docBody.appendChild(tr);
+        items.forEach((item, i) => {
+            docBody.innerHTML += `<tr><td style="text-align:center;">${i + 1}</td><td>${item.name}</td><td class="qty-cell">${item.qty}</td></tr>`;
         });
-
-        // Дата
-        const today = new Date();
-        const dateStr = today.toLocaleDateString('ru-RU');
-        document.getElementById('doc-date').innerText = dateStr;
-
-        // Переключение экранов
+        document.getElementById('doc-date').innerText = dateObj.toLocaleDateString('ru-RU');
+        const btnBack = document.getElementById('btn-preview-back');
+        if (currentViewSource === 'history') {
+            btnBack.innerHTML = '<i class="fas fa-arrow-left"></i> Назад к истории';
+            btnBack.onclick = () => { document.getElementById('document-preview-screen').style.display = 'none'; document.getElementById('history-screen').style.display = 'block'; };
+        } else {
+            btnBack.innerHTML = '<i class="fas fa-home"></i> На главную';
+            btnBack.onclick = returnToMainScreen;
+        }
         document.getElementById('purchase-editor-screen').style.display = 'none';
         document.getElementById('document-preview-screen').style.display = 'block';
     }
 
-    function backToEditor() {
-        document.getElementById('document-preview-screen').style.display = 'none';
-        document.getElementById('purchase-editor-screen').style.display = 'block';
-    }
-
-    // --- ЭКСПОРТ (PDF/JPG) ---
-
-    function saveAsJPG() {
-        const element = document.getElementById('formal-request-document');
-        html2canvas(element, { scale: 2 }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'Запрос_на_закупку_СНТ.jpg';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    }
-
-    function saveAsPDF() {
-        const { jsPDF } = window.jspdf;
-        const element = document.getElementById('formal-request-document');
-        
-        html2canvas(element, { scale: 2 }).then(canvas => {
-            // A4 размеры в мм: 210 x 297
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
-            
-            // Растягиваем картинку на весь A4
-            const pdfWidth = 210; 
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save('Запрос_на_закупку_СНТ.pdf');
-        });
-    }
-
-    window.onload = loadData;
-
     function returnToMainScreen() {
         document.getElementById('document-preview-screen').style.display = 'none';
-        document.getElementById('main-inventory-screen').style.display = 'block';
-        // Сбрасываем режим выбора, чтобы вернуть обычный вид списка
-        cancelPurchaseMode();
+        showScreen('main');
     }
-	
 
+    function saveAsJPG() {
+        html2canvas(document.getElementById('formal-request-document'), { scale: 2 }).then(c => {
+            const a = document.createElement('a'); a.download = 'Запрос.jpg'; a.href = c.toDataURL(); a.click();
+        });
+    }
+    function saveAsPDF() {
+        const { jsPDF } = window.jspdf;
+        html2canvas(document.getElementById('formal-request-document'), { scale: 2 }).then(c => {
+            const p = new jsPDF('p', 'mm', 'a4');
+            const w = 210; const h = (c.height * w) / c.width;
+            p.addImage(c.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, w, h); p.save('Запрос.pdf');
+        });
+    }
+
+    // Загрузка при старте
+    window.onload = loadData;
 </script>
 
 </body>
